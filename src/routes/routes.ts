@@ -6,5 +6,6 @@ const router = Router();
 
 router.get("/contatos", contatoController.getAllContatosController);
 router.post("/contatos", contatoController.addNewContatoController);
+router.delete("/contatos/:id", contatoController.deleteContatoController);
 
 export default router;

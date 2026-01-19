@@ -35,3 +35,30 @@ export const existsContatoRepository = async (
 
   return rows.length > 0;
 };
+
+export const getContatoByIdRepository = async (
+  id: number,
+): Promise<Contato | null> => {
+  const [rows] = await pool.query<RowDataPacket[]>(
+    "SELECT * FROM contatos WHERE id = ?",
+    [id],
+  );
+
+  if (rows.length === 0) {
+    return null;
+  }
+
+  const contato: Contato = {
+    id: rows[0].id,
+    nome: rows[0].nome,
+    telefone: rows[0].telefone,
+  };
+
+  return contato;
+};
+
+export const deleteContatoByIdRepository = async (
+  id: number,
+): Promise<void> => {
+  await pool.query("DELETE FROM contatos WHERE id = ?", [id]);
+};

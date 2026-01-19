@@ -21,3 +21,16 @@ export const addNewContatoService = async (
 
   await contatoRepository.addNewContatoRepository(contatoData);
 };
+
+export const deleteContatoByIdService = async (
+  id: number,
+): Promise<Contato | null> => {
+  const contato = await contatoRepository.getContatoByIdRepository(id);
+
+  if (!contato) {
+    return null;
+  }
+
+  await contatoRepository.deleteContatoByIdRepository(id);
+  return contato;
+};

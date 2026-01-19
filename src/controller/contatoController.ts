@@ -52,3 +52,27 @@ export const addNewContatoController = async (req: Request, res: Response) => {
     res.status(response.statusCode).json(response.body);
   }
 };
+
+export const deleteContatoController = async (req: Request, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+
+    if (!id || isNaN(id)) {
+      const response = badRequest("ID do contato inválido para exclusão.");
+      return res.status(response.statusCode).json(response.body);
+    }
+
+    const contatoDeletado = await contatoService.deleteContatoByIdService(id);
+
+    if (!contatoDeletado) {
+      const response = notFound("Contato não encontrado para exclusão.");
+      return res.status(response.statusCode).json(response.body);
+    }
+
+    const response = ok("Contato deletado com sucesso!", contatoDeletado);
+    res.status(response.statusCode).json(response.body);
+  } catch (error) {
+    const response = internalServerError("Erro ao deletar contato!");
+    res.status(response.statusCode).json(response.body);
+  }
+};
