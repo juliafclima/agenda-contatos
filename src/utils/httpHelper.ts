@@ -32,6 +32,9 @@ export const created = <T>(message: string, data: T): HttpResponse<T> =>
 export const badRequest = (message: string): HttpResponse =>
   response(StatusCode.BAD_REQUEST, false, message);
 
+export const notContent = (message: string): HttpResponse =>
+  response(StatusCode.NO_CONTENT, true, message);
+
 export const notFound = (message: string): HttpResponse =>
   response(StatusCode.NOT_FOUND, false, message);
 

@@ -6,11 +6,11 @@ import {
   conflict,
   created,
   internalServerError,
+  notContent,
   notFound,
   ok,
 } from "../utils/httpHelper.js";
 import { validaContato } from "../utils/formatador/validaContato.js";
-import { StatusCode } from "../utils/statusCode.js";
 
 export const getAllContatosController = async (req: Request, res: Response) => {
   try {
@@ -70,8 +70,8 @@ export const deleteContatoController = async (req: Request, res: Response) => {
       return res.status(response.statusCode).json(response.body);
     }
 
-    const response = notFound("Contato deletado com sucesso!");
-    res.status(response.statusCode).json([response.body.message]);
+    const response = notContent("Contato deletado com sucesso!");
+    res.status(response.statusCode).send();
   } catch (error) {
     const response = internalServerError("Erro ao deletar contato!");
     res.status(response.statusCode).json(response.body);

@@ -6,4 +6,5 @@ const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
   console.log(`Server is running on port http://localhost:${PORT}`);
+  console.log(`Swagger UI available at http://localhost:${PORT}/api-docs`);
 });
