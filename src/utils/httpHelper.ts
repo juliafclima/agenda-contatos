@@ -35,6 +35,9 @@ export const badRequest = (message: string): HttpResponse =>
 export const notFound = (message: string): HttpResponse =>
   response(StatusCode.NOT_FOUND, false, message);
 
+export const conflict = (message: string): HttpResponse =>
+  response(StatusCode.CONFLICT, false, message);
+
 export const internalServerError = (
   message = "Erro interno do servidor",
 ): HttpResponse => response(StatusCode.INTERNAL_SERVER_ERROR, false, message);

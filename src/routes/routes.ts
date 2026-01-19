@@ -1,9 +1,10 @@
 import { Router } from "express";
 
-import { getAllProdutosController } from "../controller/contatoController.js";
+import * as contatoController from "../controller/contatoController.js";
 
 const router = Router();
 
-router.get("/contatos", getAllProdutosController);
+router.get("/contatos", contatoController.getAllContatosController);
+router.post("/contatos", contatoController.addNewContatoController);
 
 export default router;

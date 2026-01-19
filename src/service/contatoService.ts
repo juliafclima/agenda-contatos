@@ -1,7 +1,23 @@
-import { getAllProdutosRepository } from "../repository/contatoRepository.js";
+import { Contato } from "../model/contato.js";
+import * as contatoRepository from "../repository/contatoRepository.js";
 
-export const getAllProdutosService = async () => {
-   const data = await getAllProdutosRepository();
-   
-   return data;
-}
+export const getAllContatosService = async () => {
+  const data = await contatoRepository.getAllContatosRepository();
+
+  return data;
+};
+
+export const addNewContatoService = async (
+  contatoData: Contato,
+): Promise<void> => {
+  const existe = await contatoRepository.existsContatoRepository(
+    contatoData.nome,
+    contatoData.telefone,
+  );
+
+  if (existe) {
+    throw new Error("DUPLICATE_CONTATO");
+  }
+
+  await contatoRepository.addNewContatoRepository(contatoData);
+};
