@@ -1,0 +1,20 @@
+{
+  "name": "agenda-contatos",
+  "version": "1.0.0",
+  "description": "Este repositório contém uma API desenvolvida para atender a necessidade de um cliente em gerenciar uma lista de contatos. Cada contato possui nome e telefone, e o sistema oferece funcionalidades completas de CRUD (Create, Read, Update, Delete).",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch --env-file=.env src/server.ts"
+  },
+  "author": "Júlia Lima",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^5.0.5",
+    "tsup": "^8.5.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
