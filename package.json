@@ -1,6 +1,7 @@
 {
   "name": "agenda-contatos",
   "version": "1.0.0",
+  "type": "module",
   "description": "Este repositório contém uma API desenvolvida para atender a necessidade de um cliente em gerenciar uma lista de contatos. Cada contato possui nome e telefone, e o sistema oferece funcionalidades completas de CRUD (Create, Read, Update, Delete).",
   "main": "index.js",
   "scripts": {
@@ -15,6 +16,8 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "express": "^5.1.0"
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "mysql2": "^3.16.1"
   }
 }
