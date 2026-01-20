@@ -3,12 +3,31 @@
  * /api/contatos:
  *   get:
  *     summary: Lista todos os contatos
- *     tags: [Contatos]
+ *     tags:
+ *       - Contatos
  *     responses:
  *       200:
  *         description: Lista de contatos retornada com sucesso
  *         content:
  *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       nome:
+ *                         type: string
+ *                       telefone:
+ *                         type: string
  *             example:
  *               success: true
  *               message: Lista de contatos retornada com sucesso!

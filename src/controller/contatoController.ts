@@ -45,7 +45,7 @@ export const addNewContatoController = async (req: Request, res: Response) => {
     return res.status(response.statusCode).json(response.body);
   } catch (error: any) {
     if (error.message === "DUPLICATE_CONTATO") {
-      const response = conflict("Contato com esse nome e telefone já existe");
+      const response = conflict("Contato com esse nome e telefone já existe!");
       return res.status(response.statusCode).json(response.body);
     }
 
@@ -59,21 +59,62 @@ export const deleteContatoController = async (req: Request, res: Response) => {
     const id = Number(req.params.id);
 
     if (!id || isNaN(id)) {
-      const response = badRequest("ID do contato inválido para exclusão.");
+      const response = badRequest("ID do contato inválido para exclusão!");
       return res.status(response.statusCode).json(response.body);
     }
 
     const contatoDeletado = await contatoService.deleteContatoByIdService(id);
 
     if (!contatoDeletado) {
-      const response = notFound("Contato não encontrado para exclusão.");
+      const response = notFound("Contato não encontrado para exclusão!");
       return res.status(response.statusCode).json(response.body);
     }
 
-    const response = notContent("Contato deletado com sucesso!");
+    const response = notContent("Contato excluido com sucesso!");
     res.status(response.statusCode).send();
   } catch (error) {
-    const response = internalServerError("Erro ao deletar contato!");
+    const response = internalServerError("Erro ao excluir contato!");
+    res.status(response.statusCode).json(response.body);
+  }
+};
+
+export const updateContatoController = async (req: Request, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+
+    if (!id || isNaN(id)) {
+      const response = badRequest("ID do contato inválido para atualização!");
+      return res.status(response.statusCode).json(response.body);
+    }
+
+    const { nome, telefone } = req.body;
+
+    if (!nome && !telefone) {
+      const response = badRequest("Nenhum dado fornecido para atualização!");
+      return res.status(response.statusCode).json(response.body);
+    }
+
+    const errorMessage = validaContato({ nome, telefone }, true);
+
+    if (errorMessage) {
+      const response = badRequest(errorMessage);
+      return res.status(response.statusCode).json(response.body);
+    }
+
+    const contatoAtualizado = await contatoService.updateContatoByIdService(
+      id,
+      { nome, telefone },
+    );
+
+    if (!contatoAtualizado) {
+      const response = notFound("Contato não encontrado para atualização!");
+      return res.status(response.statusCode).json(response.body);
+    }
+
+    const response = ok("Contato atualizado com sucesso!", contatoAtualizado);
+    res.status(response.statusCode).json(response.body);
+  } catch (error) {
+    const response = internalServerError("Erro ao atualizar contato!");
     res.status(response.statusCode).json(response.body);
   }
 };

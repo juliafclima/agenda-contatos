@@ -62,3 +62,16 @@ export const deleteContatoByIdRepository = async (
 ): Promise<void> => {
   await pool.query("DELETE FROM contatos WHERE id = ?", [id]);
 };
+
+export const updateContatoByIdRepository = async (
+  id: number,
+  contatoData: Contato,
+): Promise<void> => {
+  const { nome, telefone } = contatoData;
+
+  await pool.query("UPDATE contatos SET nome = ?, telefone = ? WHERE id = ?", [
+    nome,
+    telefone,
+    id,
+  ]);
+};

@@ -1,20 +1,25 @@
 /**
  * @swagger
- * /api/contatos:
- *   post:
- *     summary: Cria um novo contato
+ * /api/contatos/{id}:
+ *   patch:
+ *     summary: Atualiza um contato existente pelo ID
  *     tags:
  *       - Contatos
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID do contato a ser atualizado
+ *         schema:
+ *           type: integer
+ *           example: 18
  *     requestBody:
  *       required: true
- *       description: Dados necessários para criação de um novo contato
+ *       description: Dados para atualização do contato
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - nome
- *               - telefone
  *             properties:
  *               nome:
  *                 type: string
@@ -23,11 +28,10 @@
  *                 type: string
  *                 example: "24 98865-7797"
  *           example:
- *             nome: Mirian
  *             telefone: "24 98865-7797"
  *     responses:
- *       201:
- *         description: Contato inserido com sucesso
+ *       200:
+ *         description: Contato atualizado com sucesso
  *         content:
  *           application/json:
  *             schema:
@@ -48,7 +52,7 @@
  *                       type: string
  *             example:
  *               success: true
- *               message: Contato inserido com sucesso!
+ *               message: Contato atualizado com sucesso!
  *               data:
  *                 id: 27
  *                 nome: Mirian
@@ -59,19 +63,19 @@
  *           application/json:
  *             example:
  *               success: false
- *               message: Nome e telefone são obrigatórios!
- *       409:
- *         description: Contato já existe
+ *               message: Nenhum dado fornecido para atualização!
+ *       404:
+ *         description: Contato não encontrado
  *         content:
  *           application/json:
  *             example:
  *               success: false
- *               message: Contato com esse nome e telefone já existe!
+ *               message: Contato não encontrado para atualização!
  *       500:
- *         description: Erro interno ao inserir contato
+ *         description: Erro interno ao atualizar contato
  *         content:
  *           application/json:
  *             example:
  *               success: false
- *               message: Erro ao inserir novo contato!
+ *               message: Erro ao atualizar contato!
  */

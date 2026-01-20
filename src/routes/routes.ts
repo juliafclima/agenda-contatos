@@ -9,4 +9,6 @@ router.post("/contatos", contatoController.addNewContatoController);
 
 router.delete("/contatos/:id", contatoController.deleteContatoController);
 
+router.patch("/contatos/:id", contatoController.updateContatoController);
+
 export default router;

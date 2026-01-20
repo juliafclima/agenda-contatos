@@ -34,3 +34,23 @@ export const deleteContatoByIdService = async (
   await contatoRepository.deleteContatoByIdRepository(id);
   return contato;
 };
+
+export const updateContatoByIdService = async (
+  id: number,
+  contatoData: Contato,
+): Promise<Contato | null> => {
+  const contato = await contatoRepository.getContatoByIdRepository(id);
+
+  if (!contato) {
+    return null;
+  }
+
+  const contatoAtualizado = {
+    nome: contatoData.nome || contato.nome,
+    telefone: contatoData.telefone || contato.telefone,
+  };
+
+  await contatoRepository.updateContatoByIdRepository(id, contatoAtualizado);
+
+  return { id, ...contatoAtualizado };
+};
