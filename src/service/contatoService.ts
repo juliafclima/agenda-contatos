@@ -10,12 +10,12 @@ export const getAllContatosService = async () => {
 export const addNewContatoService = async (
   contatoData: Contato,
 ): Promise<void> => {
-  const existe = await contatoRepository.existsContatoRepository(
+  const contatoJaExiste = await contatoRepository.existsContatoRepository(
     contatoData.nome,
     contatoData.telefone,
   );
 
-  if (existe) {
+  if (contatoJaExiste) {
     throw new Error("DUPLICATE_CONTATO");
   }
 
@@ -32,6 +32,7 @@ export const deleteContatoByIdService = async (
   }
 
   await contatoRepository.deleteContatoByIdRepository(id);
+
   return contato;
 };
 
@@ -39,15 +40,15 @@ export const updateContatoByIdService = async (
   id: number,
   contatoData: Contato,
 ): Promise<Contato | null> => {
-  const contato = await contatoRepository.getContatoByIdRepository(id);
+  const contatoAtual = await contatoRepository.getContatoByIdRepository(id);
 
-  if (!contato) {
+  if (!contatoAtual) {
     return null;
   }
 
-  const contatoAtualizado = {
-    nome: contatoData.nome || contato.nome,
-    telefone: contatoData.telefone || contato.telefone,
+  const contatoAtualizado: Omit<Contato, "id"> = {
+    nome: contatoData.nome ?? contatoAtual.nome,
+    telefone: contatoData.telefone ?? contatoAtual.telefone,
   };
 
   await contatoRepository.updateContatoByIdRepository(id, contatoAtualizado);

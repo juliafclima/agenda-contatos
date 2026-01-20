@@ -11,46 +11,51 @@ import {
   ok,
 } from "../utils/httpHelper.js";
 import { validaContato } from "../utils/formatador/validaContato.js";
+import { sendResponse } from "../utils/sendResponseHelper.js";
 
-export const getAllContatosController = async (req: Request, res: Response) => {
+export const getAllContatosController = async (_: Request, res: Response) => {
   try {
     const contatos = await contatoService.getAllContatosService();
 
     if (!contatos || contatos.length === 0) {
-      const response = notFound("Nenhum contato encontrado!");
-
-      return res.status(response.statusCode).json(response.body);
+      return sendResponse(res, notFound("Nenhum contato encontrado!"));
     }
 
-    const response = ok("Lista de contatos retornada com sucesso!", contatos);
-    res.status(response.statusCode).json(response.body);
-  } catch (error) {
-    const response = internalServerError("Erro ao buscar contatos!");
-    res.status(response.statusCode).json(response.body);
+    return sendResponse(
+      res,
+      ok("Lista de contatos retornada com sucesso!", contatos),
+    );
+  } catch {
+    return sendResponse(res, internalServerError("Erro ao buscar contatos!"));
   }
 };
 
 export const addNewContatoController = async (req: Request, res: Response) => {
   try {
-    const errorMessage = validaContato(req.body);
+    const validationError = validaContato(req.body);
 
-    if (errorMessage) {
-      const response = badRequest(errorMessage);
-      return res.status(response.statusCode).json(response.body);
+    if (validationError) {
+      return sendResponse(res, badRequest(validationError));
     }
 
     await contatoService.addNewContatoService(req.body);
 
-    const response = created("Contato inserido com sucesso!", req.body);
-    return res.status(response.statusCode).json(response.body);
+    return sendResponse(
+      res,
+      created("Contato inserido com sucesso!", req.body),
+    );
   } catch (error: any) {
     if (error.message === "DUPLICATE_CONTATO") {
-      const response = conflict("Contato com esse nome e telefone já existe!");
-      return res.status(response.statusCode).json(response.body);
+      return sendResponse(
+        res,
+        conflict("Contato com esse nome e telefone já existe!"),
+      );
     }
 
-    const response = internalServerError("Erro ao inserir novo contato!");
-    res.status(response.statusCode).json(response.body);
+    return sendResponse(
+      res,
+      internalServerError("Erro ao inserir novo contato!"),
+    );
   }
 };
 
@@ -59,22 +64,24 @@ export const deleteContatoController = async (req: Request, res: Response) => {
     const id = Number(req.params.id);
 
     if (!id || isNaN(id)) {
-      const response = badRequest("ID do contato inválido para exclusão!");
-      return res.status(response.statusCode).json(response.body);
+      return sendResponse(
+        res,
+        badRequest("ID do contato inválido para exclusão!"),
+      );
     }
 
-    const contatoDeletado = await contatoService.deleteContatoByIdService(id);
+    const contato = await contatoService.deleteContatoByIdService(id);
 
-    if (!contatoDeletado) {
-      const response = notFound("Contato não encontrado para exclusão!");
-      return res.status(response.statusCode).json(response.body);
+    if (!contato) {
+      return sendResponse(
+        res,
+        notFound("Contato não encontrado para exclusão!"),
+      );
     }
 
-    const response = notContent("Contato excluido com sucesso!");
-    res.status(response.statusCode).send();
-  } catch (error) {
-    const response = internalServerError("Erro ao excluir contato!");
-    res.status(response.statusCode).json(response.body);
+    res.status(notContent("").statusCode).send();
+  } catch {
+    return sendResponse(res, internalServerError("Erro ao excluir contato!"));
   }
 };
 
@@ -83,22 +90,25 @@ export const updateContatoController = async (req: Request, res: Response) => {
     const id = Number(req.params.id);
 
     if (!id || isNaN(id)) {
-      const response = badRequest("ID do contato inválido para atualização!");
-      return res.status(response.statusCode).json(response.body);
+      return sendResponse(
+        res,
+        badRequest("ID do contato inválido para atualização!"),
+      );
     }
 
     const { nome, telefone } = req.body;
 
     if (!nome && !telefone) {
-      const response = badRequest("Nenhum dado fornecido para atualização!");
-      return res.status(response.statusCode).json(response.body);
+      return sendResponse(
+        res,
+        badRequest("Nenhum dado fornecido para atualização!"),
+      );
     }
 
-    const errorMessage = validaContato({ nome, telefone }, true);
+    const validationError = validaContato({ nome, telefone }, true);
 
-    if (errorMessage) {
-      const response = badRequest(errorMessage);
-      return res.status(response.statusCode).json(response.body);
+    if (validationError) {
+      return sendResponse(res, badRequest(validationError));
     }
 
     const contatoAtualizado = await contatoService.updateContatoByIdService(
@@ -107,14 +117,17 @@ export const updateContatoController = async (req: Request, res: Response) => {
     );
 
     if (!contatoAtualizado) {
-      const response = notFound("Contato não encontrado para atualização!");
-      return res.status(response.statusCode).json(response.body);
+      return sendResponse(
+        res,
+        notFound("Contato não encontrado para atualização!"),
+      );
     }
 
-    const response = ok("Contato atualizado com sucesso!", contatoAtualizado);
-    res.status(response.statusCode).json(response.body);
-  } catch (error) {
-    const response = internalServerError("Erro ao atualizar contato!");
-    res.status(response.statusCode).json(response.body);
+    return sendResponse(
+      res,
+      ok("Contato atualizado com sucesso!", contatoAtualizado),
+    );
+  } catch {
+    return sendResponse(res, internalServerError("Erro ao atualizar contato!"));
   }
 };

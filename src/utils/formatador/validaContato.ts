@@ -1,55 +1,72 @@
 import { Contato } from "../../model/contato.js";
 
+type ValidationResult = string | null;
+
 export const validaContato = (
   data: Partial<Contato>,
-  isUpdate: boolean = false,
-) => {
+  isUpdate = false,
+): ValidationResult => {
   if (!isUpdate) {
-    if (!data.nome || typeof data.nome !== "string") {
-      return "Nome é obrigatório e deve ser uma string!";
-    }
-
-    const erroNome = validaNome(data.nome);
-    if (erroNome) return erroNome;
-
-    if (!data.telefone || typeof data.telefone !== "string") {
-      return "Telefone é obrigatório e deve ser uma string!";
-    }
+    return validaCriacaoContato(data);
   }
 
-  if (isUpdate) {
-    if (data.nome && typeof data.nome !== "string") {
-      return "Nome deve ser uma string!";
-    }
+  return validaAtualizacaoContato(data);
+};
 
-    if (data.nome) {
-      const erroNome = validaNome(data.nome);
-      if (erroNome) return erroNome;
-    }
+const validaCriacaoContato = (data: Partial<Contato>): ValidationResult => {
+  if (!isString(data.nome)) {
+    return "Nome é obrigatório e deve ser uma string!";
+  }
 
-    if (data.telefone && typeof data.telefone !== "string") {
-      return "Telefone deve ser uma string!";
-    }
+  const erroNome = validaNome(data.nome);
+  if (erroNome) return erroNome;
+
+  if (!isString(data.telefone)) {
+    return "Telefone é obrigatório e deve ser uma string!";
   }
 
   return null;
 };
 
-const validaNome = (nome: string): string | null => {
-  const nomeTratado = nome.trim().replace(/\s+/g, " ");
+const validaAtualizacaoContato = (data: Partial<Contato>): ValidationResult => {
+  if (data.nome !== undefined) {
+    if (!isString(data.nome)) {
+      return "Nome deve ser uma string!";
+    }
+
+    const erroNome = validaNome(data.nome);
+    if (erroNome) return erroNome;
+  }
+
+  if (data.telefone !== undefined && !isString(data.telefone)) {
+    return "Telefone deve ser uma string!";
+  }
+
+  return null;
+};
+
+const validaNome = (nome: string): ValidationResult => {
+  const nomeTratado = normalizaEspacos(nome);
   const palavras = nomeTratado.split(" ");
 
   if (palavras.length < 2) {
     return "Nome deve conter pelo menos duas palavras";
   }
 
-  const palavraInvalida = palavras.some(
-    (palavra) => palavra.length < 3 || !/^[A-Za-zÀ-ÖØ-öø-ÿ]+$/.test(palavra),
-  );
+  const palavraInvalida = palavras.some(isPalavraInvalida);
 
   if (palavraInvalida) {
-    return "Cada palavra do nome deve ter pelo menos 3 letra";
+    return "Cada palavra do nome deve ter pelo menos 3 letras";
   }
 
   return null;
 };
+
+const isString = (value: unknown): value is string =>
+  typeof value === "string" && value.trim().length > 0;
+
+const normalizaEspacos = (texto: string): string =>
+  texto.trim().replace(/\s+/g, " ");
+
+const isPalavraInvalida = (palavra: string): boolean =>
+  palavra.length < 3 || !/^[A-Za-zÀ-ÖØ-öø-ÿ]+$/.test(palavra);

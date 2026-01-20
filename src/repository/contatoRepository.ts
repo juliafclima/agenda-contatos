@@ -3,25 +3,22 @@ import { RowDataPacket } from "mysql2";
 import pool from "../config/db.js";
 import { Contato } from "../model/contato.js";
 
-export const getAllContatosRepository = async (): Promise<RowDataPacket[]> => {
-  const [rows] = await pool.query<RowDataPacket[]>("SELECT * FROM contatos");
+type ContatoRow = Contato & RowDataPacket;
+
+export const getAllContatosRepository = async (): Promise<Contato[]> => {
+  const [rows] = await pool.query<ContatoRow[]>("SELECT * FROM contatos");
 
   return rows;
 };
 
-export const addNewContatoRepository = async (
-  contatoData: Contato,
-): Promise<void> => {
-  try {
-    const { nome, telefone } = contatoData;
-
-    await pool.query("INSERT INTO contatos (nome, telefone) VALUES (?, ?)", [
-      nome,
-      telefone,
-    ]);
-  } catch (error) {
-    throw error;
-  }
+export const addNewContatoRepository = async ({
+  nome,
+  telefone,
+}: Contato): Promise<void> => {
+  await pool.query("INSERT INTO contatos (nome, telefone) VALUES (?, ?)", [
+    nome,
+    telefone,
+  ]);
 };
 
 export const existsContatoRepository = async (
@@ -39,22 +36,12 @@ export const existsContatoRepository = async (
 export const getContatoByIdRepository = async (
   id: number,
 ): Promise<Contato | null> => {
-  const [rows] = await pool.query<RowDataPacket[]>(
+  const [rows] = await pool.query<ContatoRow[]>(
     "SELECT * FROM contatos WHERE id = ?",
     [id],
   );
 
-  if (rows.length === 0) {
-    return null;
-  }
-
-  const contato: Contato = {
-    id: rows[0].id,
-    nome: rows[0].nome,
-    telefone: rows[0].telefone,
-  };
-
-  return contato;
+  return rows[0] ?? null;
 };
 
 export const deleteContatoByIdRepository = async (
@@ -65,10 +52,8 @@ export const deleteContatoByIdRepository = async (
 
 export const updateContatoByIdRepository = async (
   id: number,
-  contatoData: Contato,
+  { nome, telefone }: Partial<Contato>,
 ): Promise<void> => {
-  const { nome, telefone } = contatoData;
-
   await pool.query("UPDATE contatos SET nome = ?, telefone = ? WHERE id = ?", [
     nome,
     telefone,
